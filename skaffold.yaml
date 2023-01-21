@@ -1,0 +1,20 @@
+apiVersion: skaffold/v4beta1
+kind: Config
+metadata:
+  name: deel-challenge
+build:
+  artifacts:
+  - image: lucasgiaco91/deel-challenge
+    docker:
+      dockerfile: Dockerfile
+    sync:
+      infer:
+        - app/app.py
+deploy:
+  helm:
+    releases:
+    - name: reverse-ip
+      chartPath: chart/reverse-ip
+      valuesFiles:
+      - chart/reverse-ip/values.yaml
+      version: 0.1.0
