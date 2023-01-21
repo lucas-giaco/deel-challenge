@@ -1,0 +1,48 @@
+name: Deploy to GKE
+on:
+  push:
+    branches:
+    - main
+
+env:
+  PROJECT_ID: ${{ secrets.GKE_PROJECT }}
+  GKE_CLUSTER: deel-challenge
+  GKE_ZONE: us-central-1a
+  DEPLOYMENT_NAME: reverse-ip
+
+jobs:
+  deploy:
+    name: Setup and Deploy
+    runs-on: ubuntu-latest
+    needs:
+      - build
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    # Authenticate against GCP
+    - id: 'auth'
+      uses: 'google-github-actions/auth@v1'
+      with:
+        credentials_json: '${{ secrets.GKE_KEY_SA }}'
+
+    # Setup gcloud CLI
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v1
+
+    # Get the GKE credentials so we can deploy to the cluster
+    - run: |-
+        gcloud container clusters get-credentials "${GKE_CLUSTER}" --zone "${GKE_ZONE}"
+
+    # Install helm
+    - uses: azure/setup-helm@v3
+      with:
+        version: 'latest'
+        token: ${{ secrets.GITHUB_TOKEN }} # only needed if version is 'latest'
+      id: install
+
+    # Deploy sample image to the GKE cluster
+    - name: Deploy
+      run: |-
+        helm install reverse-ip chart/reverse-ip -f values.yaml --set image.tag=${GITHUB_SHA}
