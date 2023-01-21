@@ -1,8 +1,12 @@
 name: Deploy to GKE
 on:
-  push:
+  workflow_run:
+    workflows:
+      - "CI to Docker Hub"
     branches:
-    - main
+      - main
+    types:
+      - completed
 
 env:
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
