@@ -2,11 +2,11 @@ name: Deploy to GKE
 on:
   workflow_run:
     workflows:
-      - "CI to Docker Hub"
+    - "CI to Docker Hub"
     branches:
-      - main
+    - main
     types:
-      - completed
+    - completed
 
 env:
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
@@ -18,8 +18,6 @@ jobs:
   deploy:
     name: Setup and Deploy
     runs-on: ubuntu-latest
-    needs:
-      - build
 
     steps:
     - name: Checkout
