@@ -17,26 +17,23 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
-    # Authenticate against GCP
-    - id: 'auth'
+    - name: 'Setup GCP Credentials'
       uses: 'google-github-actions/auth@v1'
       with:
         credentials_json: '${{ secrets.GKE_SA_KEY }}'
 
-    # Setup gcloud CLI
-    - name: Set up Cloud SDK
-      uses: google-github-actions/setup-gcloud@v1
-
-    # Get the GKE credentials so we can deploy to the cluster
-    - run: |-
-        gcloud container clusters get-credentials deel-challenge --region us-central1
+    - name: Get GKE Credentials
+      uses: 'google-github-actions/get-gke-credentials@v1'
+      with:
+        cluster_name: deel-challenge
+        location: us-central1
 
     # Install helm
-    - uses: azure/setup-helm@v3
+    - name: 'Install Helm'
+      uses: azure/setup-helm@v3
       with:
         version: 'latest'
         token: ${{ secrets.GITHUB_TOKEN }} # only needed if version is 'latest'
-      id: install
 
     # Deploy sample image to the GKE cluster
     - name: Deploy
