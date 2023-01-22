@@ -4,6 +4,8 @@
 
 replicaCount: 1
 
+debug: false
+
 image:
   repository: lucasgiaco91/deel-challenge
   pullPolicy: IfNotPresent
@@ -80,3 +82,21 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+mysql:
+  enabled: true
+  auth:
+    createDatabase: true
+    database: reverse_ip
+    rootPassword: R00t!
+    username: reverse
+    password: reverse
+  primary:
+    persistence:
+      enabled: false
+  initdbScriptsConfigMap: ""
+  initdbScripts:
+    create.sql: |-
+      CREATE DATABASE IF NOT EXISTS reverse_ip;
+      use reverse_ip;
+      CREATE TABLE IF NOT EXISTS ips(ip varchar(255), reverse_ip varchar(255));

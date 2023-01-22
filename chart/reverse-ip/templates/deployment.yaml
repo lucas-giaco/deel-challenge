@@ -46,6 +46,8 @@ spec:
               path: /
               port: http
           env:
+            - name: DEBUG
+              value: {{ .Values.debug | quote }}
             - name: HOST_IP
               valueFrom:
                 fieldRef:
@@ -53,6 +55,18 @@ spec:
             # FIXME: issue here
             - name: PORT
               value: {{ .Values.service.port | quote }}
+            - name: STORAGE_ENABLED
+              value: {{ .Values.mysql.enabled | quote }}
+            - name: STORAGE_HOST
+              value: {{ printf "%s-mysql.%s.svc" .Release.Name .Release.Namespace }}
+            - name: STORAGE_PORT
+              value: {{ .Values.mysql.primary.service.ports.mysql | quote}}
+            - name: STORAGE_DATABASE
+              value: {{ .Values.mysql.auth.database }}
+            - name: STORAGE_USER
+              value: {{ .Values.mysql.auth.username }}
+            - name: STORAGE_PASSWORD
+              value: {{ .Values.mysql.auth.password }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
