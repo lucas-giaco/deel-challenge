@@ -9,6 +9,26 @@ def healthz():
     """Health endpoint"""
     return "ok"
 
+@app.route("/db")
+def get_ips():
+    """Get all IPs stored in the DB"""
+    ips = []
+    try:
+        if bool(os.getenv('STORAGE_ENABLED', 'False')):
+            with connect(
+                host=os.getenv('STORAGE_HOST', 'localhost'),
+                port=int(os.getenv('STORAGE_PORT', '3306')),
+                database=os.getenv('STORAGE_DATABASE'),
+                user=os.getenv('STORAGE_USER'),
+                password=os.getenv('STORAGE_PASSWORD')
+            ) as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute("SELECT * FROM ips")
+                    ips = cursor.fetchall()
+    except Error as e:
+        return e.msg, 500
+    return ips
+
 @app.route("/reverse")
 def reverse_ip():
     """
