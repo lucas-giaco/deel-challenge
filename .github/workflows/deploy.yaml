@@ -38,6 +38,8 @@ jobs:
     # Deploy sample image to the GKE cluster
     - name: Deploy
       run: |-
+        helm repo add bitnami https://charts.bitnami.com/bitnami;
+        helm repo update;
         helm dep build chart/reverse-ip;
         helm upgrade --install reverse-ip chart/reverse-ip \
           -f chart/reverse-ip/values.yaml \
