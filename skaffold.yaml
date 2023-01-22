@@ -17,4 +17,12 @@ deploy:
       chartPath: chart/reverse-ip
       valuesFiles:
       - chart/reverse-ip/values.yaml
+      setValues:
+        debug: true
+        securityContext:
+          capabilities:
+            drop: []
+          readOnlyRootFilesystem: false
+          runAsNonRoot: false
+          runAsUser: 0
       version: 0.1.0
