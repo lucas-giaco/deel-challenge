@@ -44,6 +44,6 @@ jobs:
         helm upgrade --install reverse-ip chart/reverse-ip \
           -f chart/reverse-ip/values.yaml \
           --atomic \
-          --set image.tag=${{ github.sha }}
+          --set image.tag=${{ github.sha }} \
           --set mysql.auth.rootPassword=${{ secrets.MYSQL_ROOT_PASSWORD }} \
           --set mysql.auth.password=${{ secrets.MYSQL_PASSWORD }}
